@@ -21,7 +21,8 @@ VARIANT = os.environ.get("VARIANT", "mlp32")
 # Latency after the 64th bit: 64 (L1) + 1 (BIN) + H (L2) + 10 (argmax) + slack
 DONE_TIMEOUT = 250
 
-DATA, SHIFT_EN, START = 1 << 0, 1 << 1, 1 << 2
+SHIFT_EN, START = 1 << 1, 1 << 2
+PIX_SHIFT = 4  # 4-bit pixel on ui_in[7:4]
 
 # TT demo board 7-segment encodings (uo[0]=a ... uo[6]=g), digits 0-9
 SEG7 = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F]
@@ -59,10 +60,10 @@ async def send_start(dut):
 
 
 async def send_bits(dut, word, nbits=64):
-    """Send bit 0 (pixel 0, top-left) first."""
+    """Send pixel 0 (top-left) first; pixel i is bits [4*i +: 4] of word."""
     for i in range(nbits):
-        bit = (word >> i) & 1
-        await drive(dut, SHIFT_EN | (DATA if bit else 0))
+        pix = (word >> (4 * i)) & 0xF
+        await drive(dut, SHIFT_EN | (pix << PIX_SHIFT))
     await drive(dut, 0)
 
 
@@ -118,7 +119,7 @@ async def test_reset_midload(dut):
 
     # partially load garbage, then hard reset
     await send_start(dut)
-    await send_bits(dut, 0xFFFF_FFFF_FFFF_FFFF, nbits=30)
+    await send_bits(dut, (1 << 256) - 1, nbits=30)
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 3)
     dut.rst_n.value = 1
@@ -138,7 +139,7 @@ async def test_start_midload(dut):
     await setup(dut)
 
     await send_start(dut)
-    await send_bits(dut, 0xAAAA_AAAA_AAAA_AAAA, nbits=17)  # abandoned load
+    await send_bits(dut, int('a5' * 32, 16), nbits=17)  # abandoned load
     digit = await classify(dut, word)
     assert digit == vec["expected"][1], "classification wrong after START mid-load"
 
@@ -172,9 +173,9 @@ async def test_shift_en_gating(dut):
     await send_start(dut)
     # send with gaps: every bit followed by idle cycles
     for i in range(64):
-        bit = (word >> i) & 1
-        await drive(dut, SHIFT_EN | (DATA if bit else 0))
-        await drive(dut, DATA, cycles=2)  # data present but not enabled
+        pix = (word >> (4 * i)) & 0xF
+        await drive(dut, SHIFT_EN | (pix << PIX_SHIFT))
+        await drive(dut, 0xF << PIX_SHIFT, cycles=2)  # data present but not enabled
     await drive(dut, 0)
     digit = await wait_done(dut)
     assert digit == vec["expected"][2], "SHIFT_EN gating broken"

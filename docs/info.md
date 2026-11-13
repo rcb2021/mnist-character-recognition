@@ -7,6 +7,8 @@ You can also include images in this folder and reference them in the markdown. E
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
 
+> **Feasibility prototype (fork).** This branch changes the input from 1-bit to 4-bit greyscale pixels (nibble on `ui_in[7:4]`, strobed by SHIFT_EN) to measure area and timing in a 2x2 tile. The text below describes the original 1-bit design by kenchangh and has not been updated.
+
 ## How it works
 
 This project is a fully self-contained MNIST handwritten-digit classifier.

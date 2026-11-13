@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "MNIST Digit Recognition"      # Project title
+  title:        "MNIST Digit Recognition, 4-bit greyscale input (feasibility prototype)"      # Project title
   author:       "kenchangh"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Self-contained MNIST digit classifier: ternary-weight MLP with all weights on-chip as hardwired constants"
@@ -11,7 +11,7 @@ project:
   tiles: "2x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
-  top_module:  "tt_um_kenchangh_mnist"
+  top_module:  "tt_um_proto_mnist_grey"
 
   # List your project's source files here.
   # Source files must be in ./src and you must list each source file separately, one per line.
@@ -24,14 +24,14 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "DATA (serial pixel bit)"
+  ui[0]: ""
   ui[1]: "SHIFT_EN (sample DATA on rising clk)"
   ui[2]: "START (begin new image)"
   ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[4]: "PIX[0] (4-bit pixel value)"
+  ui[5]: "PIX[1] (4-bit pixel value)"
+  ui[6]: "PIX[2] (4-bit pixel value)"
+  ui[7]: "PIX[3] (4-bit pixel value)"
 
   # Outputs
   uo[0]: "SEG_A"

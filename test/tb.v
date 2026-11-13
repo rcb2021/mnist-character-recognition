@@ -32,16 +32,12 @@ module tb ();
 `ifdef GL_TEST
   wire VPWR = 1'b1;
   wire VGND = 1'b0;
-  tt_um_kenchangh_mnist user_project (
+  tt_um_proto_mnist_grey user_project (
       // Include power ports for the Gate Level test:
       .VPWR(VPWR),
       .VGND(VGND),
-`elsif VARIANT_LINEAR
-  tt_um_kenchangh_mnist #(.MLP(0)) user_project (
-`elsif VARIANT_MLP16
-  tt_um_kenchangh_mnist #(.MLP(1), .HIDDEN(16)) user_project (
 `else
-  tt_um_kenchangh_mnist #(.MLP(1), .HIDDEN(32)) user_project (
+  tt_um_proto_mnist_grey #(.PIXW(4), .AW(11)) user_project (
 `endif
       .ui_in  (ui_in),    // Dedicated inputs
       .uo_out (uo_out),   // Dedicated outputs

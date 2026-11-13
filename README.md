@@ -1,3 +1,5 @@
+> **Feasibility prototype (fork).** This branch changes the input from 1-bit to 4-bit greyscale pixels (nibble on `ui_in[7:4]`, strobed by SHIFT_EN) to measure area and timing in a 2x2 tile. The text below describes the original 1-bit design by kenchangh and has not been updated.
+
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
 # MNIST Digit Recognition on Tiny Tapeout (IHP 130nm)
